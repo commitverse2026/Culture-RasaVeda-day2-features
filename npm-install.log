@@ -1,0 +1,10 @@
+﻿node.exe : npm error code ENOSPC
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\sumit\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm error code ENOSPC:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm error syscall rename
+npm error path C:\Users\sumit\Culture-RasaVeda-day2-features\node_modules\cssnano-preset-default
+npm error dest C:\Users\sumit\Culture-RasaVeda-day2-features\node_modules\.cssnano-preset-default-axqI54om
