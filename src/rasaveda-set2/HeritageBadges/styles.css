@@ -1,46 +1,360 @@
-/* Add your feature styles here */
-.feature-page {
-  min-height: calc(100vh - 60px);
-  background: #0e0600;
-  padding: 2.5rem 2rem;
-  max-width: 1100px;
+/* Heritage Badges Page Styles */
+.badges-page {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-.page-back {
+/* User Profile Card */
+.user-profile-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  flex-wrap: wrap;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.user-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-icon {
+  font-size: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  padding: 20px;
   display: inline-block;
-  font-size: 0.8rem;
-  color: rgba(255,153,51,0.5);
-  text-decoration: none;
-  margin-bottom: 1rem;
 }
 
-.page-back:hover { color: #FF9933; }
-
-h1 {
-  font-family: "Playfair Display", serif;
-  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-  font-weight: 700;
-  color: #f5e6cc;
-  margin-bottom: 1.5rem;
+.user-info {
+  flex: 1;
 }
 
-.todo-box {
-  background: rgba(255,153,51,0.08);
-  border: 1px dashed rgba(255,153,51,0.3);
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  margin-bottom: 2rem;
-  font-size: 0.82rem;
-  color: rgba(255,153,51,0.65);
+.user-info h2 {
+  margin: 0 0 15px 0;
+  font-size: 28px;
+  color: white;
 }
 
-.placeholder {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,153,51,0.1);
-  border-radius: 12px;
-  padding: 1.25rem;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
-  color: rgba(242,228,204,0.35);
+.score-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.score-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.score-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.progress-bar-container {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progress-bar-fill {
+  background: #FFD700;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.next-badge-info {
+  font-size: 14px;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+/* Badges Section */
+.badges-section {
+  margin-bottom: 40px;
+}
+
+.badges-section h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.no-badges {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 15px;
+  padding: 40px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.badge-card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  gap: 15px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+}
+
+.badge-card.earned {
+  animation: slideIn 0.5s ease-out;
+  border-left: 4px solid;
+}
+
+.badge-card.earned:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.badge-card.locked {
+  opacity: 0.7;
+  background: #f8f9fa;
+}
+
+.badge-card.new-badge {
+  animation: pulse 0.5s ease-in-out 3;
+  background: linear-gradient(135deg, #fff 0%, #fff9c4 100%);
+}
+
+.badge-icon {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.badge-icon.locked-icon {
+  filter: grayscale(1);
+}
+
+.badge-emoji {
+  font-size: 40px;
+}
+
+.badge-info {
+  flex: 1;
+}
+
+.badge-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  color: #2c3e50;
+}
+
+.badge-info p {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.badge-criteria {
+  font-size: 12px;
+  color: #28a745;
+  font-weight: 600;
+  margin-top: 5px;
+}
+
+.progress-to-unlock {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-progress-bar {
+  flex: 1;
+  background: #e9ecef;
+  border-radius: 5px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.progress-to-unlock span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.new-badge-tag {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: #ff4757;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: bounce 0.5s ease;
+}
+
+/* Simulate Section */
+.simulate-section {
+  text-align: center;
+  padding: 30px;
+  background: #f8f9fa;
+  border-radius: 15px;
+  margin-bottom: 30px;
+}
+
+.simulate-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.simulate-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.simulate-btn:active {
+  transform: translateY(0);
+}
+
+.simulate-hint {
+  margin-top: 15px;
+  color: #6c757d;
+  font-size: 14px;
+}
+
+/* Achievement Stats */
+.achievement-stats {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.achievement-stats h3 {
+  margin-top: 0;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .badges-page {
+    padding: 15px;
+  }
+  
+  .user-profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .badges-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .badge-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .badge-icon {
+    margin: 0 auto;
+  }
 }
