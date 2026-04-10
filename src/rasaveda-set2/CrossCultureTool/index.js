@@ -42,9 +42,6 @@ STEP 7 — Apply green style if values match, red if different
 ✔ Matching fields highlighted green
 ✔ Different fields highlighted red
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

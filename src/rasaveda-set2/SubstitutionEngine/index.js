@@ -41,9 +41,7 @@ STEP 7 — Add suggestion form inside modal
 ✔ Suggestion form lets user submit a new substitute
 ✔ Submitted substitute appears in the modal list
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
+
 =========================================================
 */
   return (

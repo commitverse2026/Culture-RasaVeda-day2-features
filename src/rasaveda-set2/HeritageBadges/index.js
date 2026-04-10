@@ -41,9 +41,6 @@ STEP 7 — If threshold crossed, add badge to earnedBadges
 ✔ Reaching a threshold auto-awards a new badge
 ✔ New badge appears with a highlight animation
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

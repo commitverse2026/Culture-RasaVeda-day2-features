@@ -40,9 +40,6 @@ STEP 6 — On submit, update recipe status to "translated"
 ✔ Submitting marks recipe as translated
 ✔ Translated recipes disappear from pending list
 
----------------------------------------------------------
- DO NOT:
-- Integrate any translation API
 =========================================================
 */
   return (

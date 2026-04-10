@@ -40,9 +40,6 @@ STEP 6 — Top 3 rows get gold, silver, bronze highlight
 ✔ Rank number shown in each row
 
 ---------------------------------------------------------
- DO NOT:
-- Make API calls
-=========================================================
 */
   return (
     <div className="feature-page">

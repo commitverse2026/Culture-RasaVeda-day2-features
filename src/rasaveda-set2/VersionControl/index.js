@@ -41,9 +41,6 @@ STEP 7 — Render side-by-side diff table
 ✔ Selecting two versions shows what changed side by side
 ✔ Changed fields highlighted differently from unchanged
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

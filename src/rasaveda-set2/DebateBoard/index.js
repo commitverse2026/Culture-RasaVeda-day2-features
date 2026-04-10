@@ -41,9 +41,6 @@ STEP 7 — Add "Close Debate" button that prompts for resolution note
 ✔ Reply form adds new argument to thread
 ✔ Close button opens resolution input and marks debate closed
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

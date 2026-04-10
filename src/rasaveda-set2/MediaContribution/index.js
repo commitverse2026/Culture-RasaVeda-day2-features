@@ -41,9 +41,6 @@ STEP 7 — Clicking a media item sets lightboxItem and shows overlay
 ✔ Video items show a play indicator
 ✔ Clicking any item opens it in a lightbox overlay
 
----------------------------------------------------------
- DO NOT:
-- Upload to Cloudinary or any server
 =========================================================
 */
   return (

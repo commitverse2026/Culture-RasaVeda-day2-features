@@ -41,9 +41,6 @@ STEP 7 — Add serving size selector that scales values
 ✔ Serving size selector scales all values correctly
 ✔ Each nutrient shown with a progress bar
 
----------------------------------------------------------
- DO NOT:
-- Call Open Food Facts or any external API
 =========================================================
 */
   return (

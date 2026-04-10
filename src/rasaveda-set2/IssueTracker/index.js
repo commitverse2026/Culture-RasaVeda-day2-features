@@ -44,9 +44,6 @@ STEP 7 — Clicking Resolve prompts for resolution note, updates status to "reso
 ✔ Resolved issues show "Resolved" badge and resolution note
 ✔ Open vs resolved issues filterable
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

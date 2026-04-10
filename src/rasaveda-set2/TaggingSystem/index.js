@@ -41,9 +41,6 @@ STEP 7 — Clicking a tag pill sets selectedTag and filters recipes
 ✔ Clicking a tag pill filters recipe grid
 ✔ Active tag pill visually highlighted
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
 =========================================================
 */
   return (

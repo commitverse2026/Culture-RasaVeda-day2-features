@@ -40,9 +40,6 @@ STEP 6 — Display generated key with a Copy button
 ✔ Submitting generates and displays a fake API key
 ✔ Copy button copies key to clipboard
 
----------------------------------------------------------
- DO NOT:
-- Make real API calls
 =========================================================
 */
   return (

@@ -43,10 +43,6 @@ STEP 5 — Render version history list with static entries
 ✔ Downloaded CSV has correct headers and rows
 ✔ Version history list visible with date and record count
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
-- Use any file library
 =========================================================
 */
   return (

@@ -43,10 +43,6 @@ STEP 6 — Show pendingRecipes list below the form
 ✔ Submit adds recipe to pending list with "Pending" badge
 ✔ Pending recipes list visible below form
 
----------------------------------------------------------
- DO NOT:
-- Make API calls
-- Add database
 =========================================================
 */
   return (
