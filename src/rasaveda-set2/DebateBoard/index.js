@@ -3,59 +3,161 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 export default function DebateBoard() {
-  /*
-=========================================================
- FEATURE: Debate & Dispute Board
- Difficulty: Medium
-=========================================================
+  const [selected, setSelected] = useState(null);
 
- GOAL:
-Community members open debate threads on dishes.
-Moderators can close debates with a resolution note.
+  const [debates, setDebates] = useState([
+    {
+      id: 1,
+      dish: "Biryani",
+      claim: "Hyderabadi Biryani is the best",
+      status: "open",
+      replies: [
+        {
+          author: "User1",
+          text: "Lucknowi biryani is more refined",
+          citation: "Food blog",
+        },
+      ],
+      resolution: "",
+    },
+    {
+      id: 2,
+      dish: "Chai",
+      claim: "Milk chai is superior to black tea",
+      status: "closed",
+      replies: [],
+      resolution: "Milk chai is more popular in India",
+    },
+  ]);
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Static debates array with: dish, claim, status, replies[]
-2. Debate listing page showing open and closed threads
-3. Clicking a debate opens it with all replies
-4. Reply form — users can add arguments with citations
-5. Close debate button (moderator) adds a resolution note
+  const [reply, setReply] = useState("");
+  const [citation, setCitation] = useState("");
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+  // ➕ Add reply
+  const addReply = () => {
+    if (!reply) return;
 
-STEP 1 — Create debates array with sample data
-STEP 2 — Add useState for selectedDebate
-STEP 3 — Render debate list with open/closed status badges
-STEP 4 — Clicking a debate opens its thread view
-STEP 5 — Render replies with author and argument
-STEP 6 — Add reply form with argument and citation fields
-STEP 7 — Add "Close Debate" button that prompts for resolution note
+    const updated = debates.map((d) => {
+      if (d.id === selected.id) {
+        return {
+          ...d,
+          replies: [
+            ...d.replies,
+            { author: "You", text: reply, citation },
+          ],
+        };
+      }
+      return d;
+    });
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+    setDebates(updated);
+    setReply("");
+    setCitation("");
+  };
 
-✔ Debate list shows dish name, claim, status badge
-✔ Open debates clickable, closed debates greyed out
-✔ Thread view shows all replies
-✔ Reply form adds new argument to thread
-✔ Close button opens resolution input and marks debate closed
+  // 🔒 Close debate
+  const closeDebate = () => {
+    const note = prompt("Enter resolution note:");
+    if (!note) return;
 
-=========================================================
-*/
+    const updated = debates.map((d) => {
+      if (d.id === selected.id) {
+        return { ...d, status: "closed", resolution: note };
+      }
+      return d;
+    });
+
+    setDebates(updated);
+    setSelected({ ...selected, status: "closed", resolution: note });
+  };
+
+  // 🔙 LIST VIEW
+  if (!selected) {
+    return (
+      <div className="feature-page">
+        <button className="page-back-btn" onClick={() => setSelected(null)}>
+          ← Back
+        </button>
+        <h1>Debate & Dispute Board</h1>
+
+        <div className="todo-box">
+          Debate list + thread view + reply form + close debate
+        </div>
+
+        {debates.map((d) => (
+          <div
+            key={d.id}
+            className={`card ${d.status === "closed" ? "closed" : ""}`}
+            onClick={() => d.status === "open" && setSelected(d)}
+          >
+            <h3>{d.dish}</h3>
+            <p>{d.claim}</p>
+
+            <span className={`badge ${d.status}`}>
+              {d.status}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // 💬 THREAD VIEW
   return (
     <div className="feature-page">
-      <Link to="/" className="page-back">← Back</Link>
-      <h1>Debate & Dispute Board</h1>
+      <button className="page-back-btn" onClick={() => setSelected(null)}>
+        ← Back
+      </button>
 
-      <div className="todo-box">
-        <p>Debate list + thread view + reply form + close debate</p>
+      <h1>{selected.dish}</h1>
+      <p>{selected.claim}</p>
+
+      {/* 🗨 REPLIES */}
+      <div className="card">
+        <h3>Replies</h3>
+
+        {selected.replies.map((r, i) => (
+          <div key={i} className="reply">
+            <strong>{r.author}</strong>
+            <p>{r.text}</p>
+            <small>{r.citation}</small>
+          </div>
+        ))}
       </div>
 
-      <div className="placeholder">📋 DebateList (open/closed badges)</div>
-      <div className="placeholder">💬 ThreadView with replies</div>
-      <div className="placeholder">📝 ReplyForm</div>
-      <div className="placeholder">🔒 CloseDebate button + resolution note</div>
+      {/* 📝 FORM */}
+      {selected.status === "open" && (
+        <div className="card">
+          <h3>Add Reply</h3>
+
+          <input
+            placeholder="Your argument"
+            value={reply}
+            onChange={(e) => setReply(e.target.value)}
+          />
+
+          <input
+            placeholder="Citation (optional)"
+            value={citation}
+            onChange={(e) => setCitation(e.target.value)}
+          />
+
+          <button onClick={addReply}>Submit</button>
+        </div>
+      )}
+
+      {/* 🔒 CLOSE */}
+      {selected.status === "open" && (
+        <button onClick={closeDebate}>Close Debate</button>
+      )}
+
+      {/* 📌 RESOLUTION */}
+      {selected.status === "closed" && (
+        <div className="card">
+          <h3>Resolution</h3>
+          <p>{selected.resolution}</p>
+        </div>
+      )}
     </div>
   );
 }
