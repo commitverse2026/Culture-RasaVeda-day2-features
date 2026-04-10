@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { INITIAL_ISSUES, FLAG_CATEGORIES } from "./issuesSeed";
 import "./styles.css";
 
 const initialIssues = [
@@ -41,200 +42,284 @@ const categoryOptions = ["Wrong Info", "Missing Context", "Offensive", "Other"];
 const filterOptions = ["All", "Open", "Resolved"];
 
 export default function IssueTracker() {
-  const [issues, setIssues] = useState(initialIssues);
-  const [recipe, setRecipe] = useState(recipeOptions[0]);
-  const [category, setCategory] = useState(categoryOptions[0]);
+  const [issues, setIssues] = useState(INITIAL_ISSUES);
+  const [filter, setFilter] = useState("open");
+  const [recipeName, setRecipeName] = useState("");
+  const [category, setCategory] = useState(FLAG_CATEGORIES[0]);
   const [description, setDescription] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [formError, setFormError] = useState("");
+  const [toast, setToast] = useState("");
 
-  const filteredIssues = useMemo(() => {
-    if (activeFilter === "All") {
-      return issues;
+  const [resolveTarget, setResolveTarget] = useState(null);
+  const [resolutionDraft, setResolutionDraft] = useState("");
+  const [resolveError, setResolveError] = useState("");
+
+  const filtered = useMemo(() => {
+    if (filter === "all") return issues;
+    return issues.filter((i) => i.status === filter);
+  }, [issues, filter]);
+
+  const openCount = useMemo(() => issues.filter((i) => i.status === "open").length, [issues]);
+  const resolvedCount = useMemo(
+    () => issues.filter((i) => i.status === "resolved").length,
+    [issues]
+  );
+
+  const submitFlag = (e) => {
+    e.preventDefault();
+    setFormError("");
+    if (!recipeName.trim()) {
+      setFormError("Enter the recipe name you are flagging.");
+      return;
     }
-
-    return issues.filter(
-      (issue) => issue.status === activeFilter.toLowerCase()
-    );
-  }, [activeFilter, issues]);
-
-  const openIssues = issues.filter((issue) => issue.status === "open").length;
-  const resolvedIssues = issues.filter((issue) => issue.status === "resolved").length;
-
-  function handleSubmit(event) {
-    event.preventDefault();
-
     if (!description.trim()) {
+      setFormError("Describe the inaccuracy or concern.");
       return;
     }
 
-    const newIssue = {
-      id: Date.now(),
-      recipe,
+    const row = {
+      id: `iss-${Date.now()}`,
+      recipe: recipeName.trim(),
       category,
       description: description.trim(),
       status: "open",
-      resolutionNote: ""
+      resolutionNote: "",
+      createdAt: new Date().toISOString(),
+      resolvedAt: null,
     };
 
-    setIssues((currentIssues) => [newIssue, ...currentIssues]);
+    setIssues((prev) => [row, ...prev]);
+    setRecipeName("");
+    setCategory(FLAG_CATEGORIES[0]);
     setDescription("");
-    setActiveFilter("Open");
-  }
+    setToast("Issue submitted for moderator review.");
+    window.setTimeout(() => setToast(""), 3200);
+  };
 
-  function handleResolve(issueId) {
-    const resolutionNote = window.prompt("Add a resolution note for this issue:");
+  const openResolve = (issue) => {
+    setResolveTarget(issue);
+    setResolutionDraft("");
+    setResolveError("");
+  };
 
-    if (!resolutionNote || !resolutionNote.trim()) {
+  const closeResolveModal = () => {
+    setResolveTarget(null);
+    setResolutionDraft("");
+    setResolveError("");
+  };
+
+  const confirmResolve = () => {
+    const note = resolutionDraft.trim();
+    if (!note) {
+      setResolveError("Add a short resolution note for the record.");
       return;
     }
-
-    setIssues((currentIssues) =>
-      currentIssues.map((issue) =>
-        issue.id === issueId
+    setIssues((prev) =>
+      prev.map((i) =>
+        i.id === resolveTarget.id
           ? {
-              ...issue,
+              ...i,
               status: "resolved",
-              resolutionNote: resolutionNote.trim()
+              resolutionNote: note,
+              resolvedAt: new Date().toISOString(),
             }
-          : issue
+          : i
       )
     );
-  }
+    closeResolveModal();
+    setToast("Issue marked resolved.");
+    window.setTimeout(() => setToast(""), 2800);
+  };
 
   return (
-    <div className="feature-page issue-tracker-page">
-      <Link to="/" className="page-back">
+    <div className="it-page">
+      <Link to="/" className="it-back">
         ← Back
       </Link>
 
-      <section className="tracker-hero">
-        <div>
-          <p className="eyebrow">Moderation Workflow</p>
-          <h1>Issue Tracker for Cultural Accuracy</h1>
-          <p className="hero-copy">
-            Let contributors flag questionable food history, missing context,
-            or culturally sensitive concerns, then help moderators resolve them clearly.
+      <header className="it-header">
+        <p className="it-eyebrow">Feature 7 · Cultural accuracy</p>
+        <h1>Issue tracker</h1>
+        <p className="it-lede">
+          Flag inaccuracies on recipe pages. Moderators review open reports, attach a resolution note, and
+          close the loop — all in this demo workspace.
+        </p>
+      </header>
+
+      {toast && (
+        <div className="it-toast" role="status">
+          {toast}
+        </div>
+      )}
+
+      <div className="it-layout">
+        <section className="it-card it-card--form" aria-labelledby="flag-heading">
+          <h2 id="flag-heading" className="it-card-title">
+            Report an issue
+          </h2>
+          <p className="it-card-sub">
+            Which recipe is affected, what kind of problem is it, and what should reviewers know?
           </p>
-        </div>
-
-        <div className="hero-stats">
-          <div className="stat-card">
-            <span>Open Issues</span>
-            <strong>{openIssues}</strong>
-          </div>
-          <div className="stat-card">
-            <span>Resolved</span>
-            <strong>{resolvedIssues}</strong>
-          </div>
-        </div>
-      </section>
-
-      <section className="tracker-grid">
-        <form className="submission-card" onSubmit={handleSubmit}>
-          <div className="section-heading">
-            <h2>Submit an Issue</h2>
-            <p>Flag inaccurate, incomplete, or sensitive content for moderator review.</p>
-          </div>
-
-          <label className="form-field">
-            <span>Recipe</span>
-            <select value={recipe} onChange={(event) => setRecipe(event.target.value)}>
-              {recipeOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span>Category</span>
-            <select value={category} onChange={(event) => setCategory(event.target.value)}>
-              {categoryOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span>Description</span>
-            <textarea
-              rows="5"
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder="Describe the issue clearly so moderators can verify and resolve it."
-            />
-          </label>
-
-          <button type="submit" className="submit-button" disabled={!description.trim()}>
-            Submit Issue
-          </button>
-        </form>
-
-        <section className="dashboard-card">
-          <div className="dashboard-top">
-            <div className="section-heading">
-              <h2>Moderator Dashboard</h2>
-              <p>Review open issues, resolve them with a note, and inspect past decisions.</p>
-            </div>
-
-            <div className="filter-chips">
-              {filterOptions.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  className={`filter-chip ${activeFilter === option ? "active" : ""}`}
-                  onClick={() => setActiveFilter(option)}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="issues-list">
-            {filteredIssues.map((issue) => (
-              <article key={issue.id} className="issue-card">
-                <div className="issue-card-top">
-                  <div>
-                    <h3>{issue.recipe}</h3>
-                    <p className="issue-meta">{issue.category}</p>
-                  </div>
-                  <span className={`status-badge ${issue.status}`}>
-                    {issue.status === "open" ? "Open" : "Resolved"}
-                  </span>
-                </div>
-
-                <p className="issue-description">{issue.description}</p>
-
-                {issue.status === "resolved" ? (
-                  <div className="resolution-note">
-                    <strong>Resolution Note</strong>
-                    <p>{issue.resolutionNote}</p>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    className="resolve-button"
-                    onClick={() => handleResolve(issue.id)}
-                  >
-                    Resolve
-                  </button>
-                )}
-              </article>
-            ))}
-
-            {filteredIssues.length === 0 ? (
-              <div className="empty-state">
-                <h3>No issues in this filter</h3>
-                <p>Try another filter or submit a new moderation item.</p>
+          <form className="it-form" onSubmit={submitFlag}>
+            {formError && (
+              <div className="it-error" role="alert">
+                {formError}
               </div>
-            ) : null}
-          </div>
+            )}
+            <label className="it-label">
+              Recipe name
+              <input
+                className="it-input"
+                value={recipeName}
+                onChange={(e) => setRecipeName(e.target.value)}
+                placeholder="e.g. Hyderabadi Biryani"
+                autoComplete="off"
+              />
+            </label>
+            <label className="it-label">
+              Category
+              <select
+                className="it-input it-select"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                {FLAG_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="it-label">
+              Description
+              <textarea
+                className="it-textarea"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Be specific: which line, claim, or omission is wrong?"
+                rows={5}
+              />
+            </label>
+            <button type="submit" className="it-btn it-btn--primary">
+              Submit issue
+            </button>
+          </form>
         </section>
-      </section>
+
+        <section className="it-card it-card--dash" aria-labelledby="dash-heading">
+          <div className="it-dash-head">
+            <div>
+              <h2 id="dash-heading" className="it-card-title">
+                Moderator dashboard
+              </h2>
+              <p className="it-card-sub it-card-sub--tight">
+                {openCount} open · {resolvedCount} resolved · {issues.length} total
+              </p>
+            </div>
+          </div>
+
+          <div className="it-filters" role="tablist" aria-label="Filter by status">
+            {[
+              { key: "open", label: "Open" },
+              { key: "resolved", label: "Resolved" },
+              { key: "all", label: "All" },
+            ].map(({ key, label }) => (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={filter === key}
+                className={"it-filter" + (filter === key ? " is-active" : "")}
+                onClick={() => setFilter(key)}
+              >
+                {label}
+                {key === "open" && openCount > 0 && (
+                  <span className="it-filter-count">{openCount}</span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {filtered.length === 0 ? (
+            <p className="it-empty">No issues in this view.</p>
+          ) : (
+            <ul className="it-issue-list">
+              {filtered.map((issue) => (
+                <li key={issue.id} className="it-issue">
+                  <div className="it-issue-top">
+                    <span className={"it-status it-status--" + issue.status}>{issue.status}</span>
+                    <span className="it-cat-pill">{issue.category}</span>
+                  </div>
+                  <h3 className="it-recipe">{issue.recipe}</h3>
+                  <p className="it-desc">{issue.description}</p>
+                  <p className="it-meta">
+                    Reported {new Date(issue.createdAt).toLocaleString()}
+                    {issue.resolvedAt && (
+                      <>
+                        {" "}
+                        · Resolved {new Date(issue.resolvedAt).toLocaleString()}
+                      </>
+                    )}
+                  </p>
+                  {issue.status === "resolved" && issue.resolutionNote && (
+                    <div className="it-resolution">
+                      <span className="it-resolution-label">Resolution</span>
+                      <p className="it-resolution-text">{issue.resolutionNote}</p>
+                    </div>
+                  )}
+                  {issue.status === "open" && (
+                    <button
+                      type="button"
+                      className="it-btn it-btn--ghost it-btn--sm"
+                      onClick={() => openResolve(issue)}
+                    >
+                      Resolve
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+
+      {resolveTarget && (
+        <div className="it-modal-root" role="dialog" aria-modal="true" aria-labelledby="resolve-title">
+          <div className="it-modal-backdrop" onClick={closeResolveModal} aria-hidden />
+          <div className="it-modal">
+            <h2 id="resolve-title" className="it-modal-title">
+              Resolve issue
+            </h2>
+            <p className="it-modal-recipe">
+              <strong>{resolveTarget.recipe}</strong> — {resolveTarget.category}
+            </p>
+            <label className="it-label">
+              Resolution note
+              <textarea
+                className="it-textarea"
+                value={resolutionDraft}
+                onChange={(e) => setResolutionDraft(e.target.value)}
+                placeholder="What was changed or decided? This is shown with the resolved badge."
+                rows={4}
+                autoFocus
+              />
+            </label>
+            {resolveError && (
+              <div className="it-error it-error--compact" role="alert">
+                {resolveError}
+              </div>
+            )}
+            <div className="it-modal-actions">
+              <button type="button" className="it-btn it-btn--ghost" onClick={closeResolveModal}>
+                Cancel
+              </button>
+              <button type="button" className="it-btn it-btn--primary" onClick={confirmResolve}>
+                Mark resolved
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
