@@ -1,63 +1,240 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "./styles.css";
 
+const initialIssues = [
+  {
+    id: 1,
+    recipe: "Hyderabadi Biryani",
+    category: "Wrong Info",
+    description: "The spice mix mentions turmeric, which is not used in this family version.",
+    status: "open",
+    resolutionNote: ""
+  },
+  {
+    id: 2,
+    recipe: "Avial",
+    category: "Missing Context",
+    description: "Please add note about temple-feast and sadya variations across Kerala.",
+    status: "open",
+    resolutionNote: ""
+  },
+  {
+    id: 3,
+    recipe: "Sarson da Saag",
+    category: "Other",
+    description: "The article would benefit from a note on winter harvest traditions.",
+    status: "resolved",
+    resolutionNote: "Moderator added seasonal context and updated the cultural background section."
+  }
+];
+
+const recipeOptions = [
+  "Hyderabadi Biryani",
+  "Avial",
+  "Khaman Dhokla",
+  "Thukpa",
+  "Sarson da Saag"
+];
+
+const categoryOptions = ["Wrong Info", "Missing Context", "Offensive", "Other"];
+const filterOptions = ["All", "Open", "Resolved"];
+
 export default function IssueTracker() {
-  /*
-=========================================================
- FEATURE: Issue Tracker for Cultural Accuracy
- Difficulty: Medium
-=========================================================
+  const [issues, setIssues] = useState(initialIssues);
+  const [recipe, setRecipe] = useState(recipeOptions[0]);
+  const [category, setCategory] = useState(categoryOptions[0]);
+  const [description, setDescription] = useState("");
+  const [activeFilter, setActiveFilter] = useState("All");
 
- GOAL:
-Users flag inaccuracies on recipe pages.
-Moderators review and resolve open issues.
+  const filteredIssues = useMemo(() => {
+    if (activeFilter === "All") {
+      return issues;
+    }
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Static issues array with: recipe, category, description, status
-2. Issue submission panel — category dropdown + description field
-3. On submit, add new issue to issues list with "open" status
-4. Moderator dashboard showing all open issues
-5. "Resolve" button closes the issue with a resolution note
+    return issues.filter(
+      (issue) => issue.status === activeFilter.toLowerCase()
+    );
+  }, [activeFilter, issues]);
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+  const openIssues = issues.filter((issue) => issue.status === "open").length;
+  const resolvedIssues = issues.filter((issue) => issue.status === "resolved").length;
 
-STEP 1 — Create issues array with sample data
-STEP 2 — Add useState for issues and form fields
-STEP 3 — Render issue submission form with:
-         - Category: Wrong Info / Missing Context / Offensive / Other
-         - Description textarea
-STEP 4 — On submit, push new issue into issues with status: "open"
-STEP 5 — Render moderator dashboard with open issues list
-STEP 6 — Each issue has a "Resolve" button
-STEP 7 — Clicking Resolve prompts for resolution note, updates status to "resolved"
+  function handleSubmit(event) {
+    event.preventDefault();
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+    if (!description.trim()) {
+      return;
+    }
 
-✔ Issue submission form visible with category and description
-✔ Submitting adds issue to the open issues list
-✔ Open issues dashboard shows all pending issues
-✔ Resolve button prompts for resolution note
-✔ Resolved issues show "Resolved" badge and resolution note
-✔ Open vs resolved issues filterable
+    const newIssue = {
+      id: Date.now(),
+      recipe,
+      category,
+      description: description.trim(),
+      status: "open",
+      resolutionNote: ""
+    };
 
-=========================================================
-*/
+    setIssues((currentIssues) => [newIssue, ...currentIssues]);
+    setDescription("");
+    setActiveFilter("Open");
+  }
+
+  function handleResolve(issueId) {
+    const resolutionNote = window.prompt("Add a resolution note for this issue:");
+
+    if (!resolutionNote || !resolutionNote.trim()) {
+      return;
+    }
+
+    setIssues((currentIssues) =>
+      currentIssues.map((issue) =>
+        issue.id === issueId
+          ? {
+              ...issue,
+              status: "resolved",
+              resolutionNote: resolutionNote.trim()
+            }
+          : issue
+      )
+    );
+  }
+
   return (
-    <div className="feature-page">
-      <Link to="/" className="page-back">← Back</Link>
-      <h1>Issue Tracker for Cultural Accuracy</h1>
+    <div className="feature-page issue-tracker-page">
+      <Link to="/" className="page-back">
+        ← Back
+      </Link>
 
-      <div className="todo-box">
-        <p>Issue submission form + open issues dashboard + resolve action</p>
-      </div>
+      <section className="tracker-hero">
+        <div>
+          <p className="eyebrow">Moderation Workflow</p>
+          <h1>Issue Tracker for Cultural Accuracy</h1>
+          <p className="hero-copy">
+            Let contributors flag questionable food history, missing context,
+            or culturally sensitive concerns, then help moderators resolve them clearly.
+          </p>
+        </div>
 
-      <div className="placeholder">🚩 IssueSubmissionForm (category + description)</div>
-      <div className="placeholder">📋 OpenIssuesDashboard</div>
-      <div className="placeholder">✅ ResolveButton + resolution note</div>
+        <div className="hero-stats">
+          <div className="stat-card">
+            <span>Open Issues</span>
+            <strong>{openIssues}</strong>
+          </div>
+          <div className="stat-card">
+            <span>Resolved</span>
+            <strong>{resolvedIssues}</strong>
+          </div>
+        </div>
+      </section>
+
+      <section className="tracker-grid">
+        <form className="submission-card" onSubmit={handleSubmit}>
+          <div className="section-heading">
+            <h2>Submit an Issue</h2>
+            <p>Flag inaccurate, incomplete, or sensitive content for moderator review.</p>
+          </div>
+
+          <label className="form-field">
+            <span>Recipe</span>
+            <select value={recipe} onChange={(event) => setRecipe(event.target.value)}>
+              {recipeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="form-field">
+            <span>Category</span>
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              {categoryOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="form-field">
+            <span>Description</span>
+            <textarea
+              rows="5"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Describe the issue clearly so moderators can verify and resolve it."
+            />
+          </label>
+
+          <button type="submit" className="submit-button" disabled={!description.trim()}>
+            Submit Issue
+          </button>
+        </form>
+
+        <section className="dashboard-card">
+          <div className="dashboard-top">
+            <div className="section-heading">
+              <h2>Moderator Dashboard</h2>
+              <p>Review open issues, resolve them with a note, and inspect past decisions.</p>
+            </div>
+
+            <div className="filter-chips">
+              {filterOptions.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className={`filter-chip ${activeFilter === option ? "active" : ""}`}
+                  onClick={() => setActiveFilter(option)}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="issues-list">
+            {filteredIssues.map((issue) => (
+              <article key={issue.id} className="issue-card">
+                <div className="issue-card-top">
+                  <div>
+                    <h3>{issue.recipe}</h3>
+                    <p className="issue-meta">{issue.category}</p>
+                  </div>
+                  <span className={`status-badge ${issue.status}`}>
+                    {issue.status === "open" ? "Open" : "Resolved"}
+                  </span>
+                </div>
+
+                <p className="issue-description">{issue.description}</p>
+
+                {issue.status === "resolved" ? (
+                  <div className="resolution-note">
+                    <strong>Resolution Note</strong>
+                    <p>{issue.resolutionNote}</p>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="resolve-button"
+                    onClick={() => handleResolve(issue.id)}
+                  >
+                    Resolve
+                  </button>
+                )}
+              </article>
+            ))}
+
+            {filteredIssues.length === 0 ? (
+              <div className="empty-state">
+                <h3>No issues in this filter</h3>
+                <p>Try another filter or submit a new moderation item.</p>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      </section>
     </div>
   );
 }
