@@ -3,6 +3,44 @@ import { Link } from "react-router-dom";
 import { INITIAL_ISSUES, FLAG_CATEGORIES } from "./issuesSeed";
 import "./styles.css";
 
+const initialIssues = [
+  {
+    id: 1,
+    recipe: "Hyderabadi Biryani",
+    category: "Wrong Info",
+    description: "The spice mix mentions turmeric, which is not used in this family version.",
+    status: "open",
+    resolutionNote: ""
+  },
+  {
+    id: 2,
+    recipe: "Avial",
+    category: "Missing Context",
+    description: "Please add note about temple-feast and sadya variations across Kerala.",
+    status: "open",
+    resolutionNote: ""
+  },
+  {
+    id: 3,
+    recipe: "Sarson da Saag",
+    category: "Other",
+    description: "The article would benefit from a note on winter harvest traditions.",
+    status: "resolved",
+    resolutionNote: "Moderator added seasonal context and updated the cultural background section."
+  }
+];
+
+const recipeOptions = [
+  "Hyderabadi Biryani",
+  "Avial",
+  "Khaman Dhokla",
+  "Thukpa",
+  "Sarson da Saag"
+];
+
+const categoryOptions = ["Wrong Info", "Missing Context", "Offensive", "Other"];
+const filterOptions = ["All", "Open", "Resolved"];
+
 export default function IssueTracker() {
   const [issues, setIssues] = useState(INITIAL_ISSUES);
   const [filter, setFilter] = useState("open");
