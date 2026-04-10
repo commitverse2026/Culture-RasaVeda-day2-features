@@ -2,7 +2,7 @@
 .feature-page {
   min-height: calc(100vh - 60px);
   background: #0e0600;
-  padding: 2.5rem 2rem;
+  padding: 2.5rem 3rem; 
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -43,4 +43,59 @@ h1 {
   margin-bottom: 1rem;
   font-size: 0.85rem;
   color: rgba(242,228,204,0.35);
+}
+select {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,153,51,0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #f5e6cc;
+  outline: none;
+}
+
+select option {
+  background: #1a0d00;   /* dark background */
+  color: #f5e6cc;        /* visible text */
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,153,51,0.1);
+  color: #f5e6cc;
+}
+
+tr:first-child td {
+  border-top: 1px solid rgba(255,153,51,0.2);
+}
+.match {
+  color: #4ade80; /* green */
+}
+
+.diff {
+  color: #ff6b6b; /* red */
+}
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,153,51,0.1);
+  border-radius: 14px;
+  padding: 1rem;
+}
+select {
+  min-width: 180px;
+}
+.selector-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+.page-sub {
+  font-size: 0.88rem;
+  color: rgba(240, 230, 211, 0.6);
+  margin-bottom: 1rem;
 }

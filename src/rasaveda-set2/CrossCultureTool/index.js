@@ -1,8 +1,3 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./styles.css";
-
-export default function CrossCultureTool() {
   /*
 =========================================================
  FEATURE: Cross-Culture Food Comparison Tool
@@ -44,17 +39,120 @@ STEP 7 — Apply green style if values match, red if different
 
 =========================================================
 */
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./styles.css";
+
+export default function CrossCultureTool() {
+  // 📚 Static recipes data
+  const recipes = [
+    {
+      name: "Biryani",
+      region: "India",
+      community: "Muslim",
+      dietary: "Non-Veg",
+      ingredients: "Rice, Chicken, Spices",
+      technique: "Dum",
+      significance: "Festive royal dish",
+    },
+    {
+      name: "Sushi",
+      region: "Japan",
+      community: "Japanese",
+      dietary: "Non-Veg",
+      ingredients: "Rice, Fish",
+      technique: "Assembly",
+      significance: "Cultural staple",
+    },
+    {
+      name: "Dal Tadka",
+      region: "India",
+      community: "North Indian",
+      dietary: "Veg",
+      ingredients: "Lentils, Spices",
+      technique: "Tadka",
+      significance: "Daily comfort food",
+    },
+  ];
+
+  const [dishA, setDishA] = useState(null);
+  const [dishB, setDishB] = useState(null);
+
+  const rows = [
+    { label: "Name", key: "name" },
+    { label: "Region", key: "region" },
+    { label: "Community", key: "community" },
+    { label: "Dietary Tag", key: "dietary" },
+    { label: "Ingredients", key: "ingredients" },
+    { label: "Cooking Technique", key: "technique" },
+    { label: "Cultural Significance", key: "significance" },
+  ];
+
   return (
     <div className="feature-page">
       <Link to="/" className="page-back">← Back</Link>
-      <h1>Cross-Culture Food Comparison Tool</h1>
 
-      <div className="todo-box">
-        <p>Two dish selectors + side-by-side comparison table with match highlights</p>
+      <h1 className="page-title">Cross-Culture Food Comparison Tool</h1>
+
+      <p className="page-sub">
+        <strong>Compare two dishes</strong> — Select any two dishes to see similarities and differences.
+      </p>
+
+      {/* 🔽 SELECTORS */}
+      <div className="selector-row">
+        <select
+          onChange={(e) =>
+            setDishA(recipes.find(r => r.name === e.target.value))
+          }
+        >
+          <option>Select Dish A</option>
+          {recipes.map((r) => (
+            <option key={r.name}>{r.name}</option>
+          ))}
+        </select>
+
+        <select
+          onChange={(e) =>
+            setDishB(recipes.find(r => r.name === e.target.value))
+          }
+        >
+          <option>Select Dish B</option>
+          {recipes.map((r) => (
+            <option key={r.name}>{r.name}</option>
+          ))}
+        </select>
       </div>
 
-      <div className="placeholder">🔽 DishSelector A + DishSelector B</div>
-      <div className="placeholder">📊 ComparisonTable (match = green, diff = red)</div>
+      {/* 📊 TABLE */}
+      {dishA && dishB && (
+        <div className="card">
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <tbody>
+              {rows.map((row) => {
+                const valA = dishA[row.key];
+                const valB = dishB[row.key];
+                const match = valA === valB;
+
+                return (
+                  <tr key={row.key}>
+                    <td style={{ fontWeight: "bold", color: "#ff9933" }}>
+                      {row.label}
+                    </td>
+
+                    <td className={match ? "match" : "diff"}>
+                      {valA}
+                    </td>
+
+                    <td className={match ? "match" : "diff"}>
+                      {valB}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
