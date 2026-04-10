@@ -3,62 +3,144 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 export default function RecipeSubmission() {
-  /*
-=========================================================
- FEATURE: Community Recipe Submission Portal
- Difficulty: Medium
-=========================================================
+  const [currentStep, setCurrentStep] = useState(1);
 
- GOAL:
-A multi-step form where users can submit a new recipe.
-Submitted recipes go into "pending" state.
+  const [formData, setFormData] = useState({
+    name: "",
+    region: "",
+    language: "",
+    dietary: "",
+    ingredients: [""],
+    steps: [""]
+  });
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Multi-step form — 3 steps:
-   Step 1: Basic Info  (name, region, language, dietary tag)
-   Step 2: Ingredients (list of ingredient inputs)
-   Step 3: Steps       (preparation steps + review)
-2. Next / Back buttons to navigate between steps
-3. On final submit, add recipe to a local "pending" list
-4. Show submitted recipes in a "Pending Recipes" section
+  const [pendingRecipes, setPendingRecipes] = useState([]);
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-STEP 1 — Add useState for currentStep (1, 2, or 3)
-STEP 2 — Add useState for formData object
-STEP 3 — Render form fields based on currentStep
-STEP 4 — Next button advances step, Back button goes back
-STEP 5 — On submit, push recipe into pendingRecipes array
-STEP 6 — Show pendingRecipes list below the form
+  // Handle dynamic list changes
+  const handleListChange = (index, value, field) => {
+    const updatedList = [...formData[field]];
+    updatedList[index] = value;
+    setFormData({ ...formData, [field]: updatedList });
+  };
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+  const addField = (field) => {
+    setFormData({ ...formData, [field]: [...formData[field], ""] });
+  };
 
-✔ Step indicator shows which step user is on (1/2/3)
-✔ Step 1 fields: name, region, language, dietary tag
-✔ Step 2 fields: ingredients (add/remove rows)
-✔ Step 3 fields: preparation steps + summary review
-✔ Submit adds recipe to pending list with "Pending" badge
-✔ Pending recipes list visible below form
+  const removeField = (index, field) => {
+    const updatedList = formData[field].filter((_, i) => i !== index);
+    setFormData({ ...formData, [field]: updatedList });
+  };
 
-=========================================================
-*/
+  const nextStep = () => setCurrentStep((prev) => prev + 1);
+  const prevStep = () => setCurrentStep((prev) => prev - 1);
+
+  const handleSubmit = () => {
+    const newRecipe = { ...formData, status: "Pending" };
+    setPendingRecipes([...pendingRecipes, newRecipe]);
+
+    // Reset form
+    setFormData({
+      name: "",
+      region: "",
+      language: "",
+      dietary: "",
+      ingredients: [""],
+      steps: [""]
+    });
+
+    setCurrentStep(1);
+  };
+
   return (
     <div className="feature-page">
       <Link to="/" className="page-back">← Back</Link>
       <h1>Community Recipe Submission Portal</h1>
 
-      <div className="todo-box">
-        <p>Multi-step form (3 steps) + pending recipes list</p>
+      {/* Step Indicator */}
+      <h3>Step {currentStep} / 3</h3>
+
+      {/* STEP 1 */}
+      {currentStep === 1 && (
+        <div>
+          <input name="name" placeholder="Recipe Name" value={formData.name} onChange={handleChange} />
+          <input name="region" placeholder="Region" value={formData.region} onChange={handleChange} />
+          <input name="language" placeholder="Language" value={formData.language} onChange={handleChange} />
+          <input name="dietary" placeholder="Dietary Tag" value={formData.dietary} onChange={handleChange} />
+        </div>
+      )}
+
+      {/* STEP 2 */}
+      {currentStep === 2 && (
+        <div>
+          <h4>Ingredients</h4>
+          {formData.ingredients.map((item, index) => (
+            <div key={index}>
+              <input
+                value={item}
+                onChange={(e) => handleListChange(index, e.target.value, "ingredients")}
+                placeholder={`Ingredient ${index + 1}`}
+              />
+              <button onClick={() => removeField(index, "ingredients")}>Remove</button>
+            </div>
+          ))}
+          <button onClick={() => addField("ingredients")}>+ Add Ingredient</button>
+        </div>
+      )}
+
+      {/* STEP 3 */}
+      {currentStep === 3 && (
+        <div>
+          <h4>Preparation Steps</h4>
+          {formData.steps.map((step, index) => (
+            <div key={index}>
+              <input
+                value={step}
+                onChange={(e) => handleListChange(index, e.target.value, "steps")}
+                placeholder={`Step ${index + 1}`}
+              />
+              <button onClick={() => removeField(index, "steps")}>Remove</button>
+            </div>
+          ))}
+          <button onClick={() => addField("steps")}>+ Add Step</button>
+
+          <h4>Review</h4>
+          <p><strong>Name:</strong> {formData.name}</p>
+          <p><strong>Region:</strong> {formData.region}</p>
+          <p><strong>Language:</strong> {formData.language}</p>
+          <p><strong>Dietary:</strong> {formData.dietary}</p>
+        </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div style={{ marginTop: "20px" }}>
+        {currentStep > 1 && <button onClick={prevStep}>Back</button>}
+        {currentStep < 3 && <button onClick={nextStep}>Next</button>}
+        {currentStep === 3 && <button onClick={handleSubmit}>Submit</button>}
       </div>
 
-      <div className="placeholder">📋 StepIndicator (Step 1 / 2 / 3)</div>
-      <div className="placeholder">📝 Step1 — Basic Info</div>
-      <div className="placeholder">🧂 Step2 — Ingredients</div>
-      <div className="placeholder">👨‍🍳 Step3 — Preparation Steps + Review</div>
-      <div className="placeholder">⏳ PendingRecipesList</div>
+      {/* Pending Recipes */}
+      <div style={{ marginTop: "40px" }}>
+        <h2>⏳ Pending Recipes</h2>
+        {pendingRecipes.length === 0 ? (
+          <p>No recipes submitted yet.</p>
+        ) : (
+          pendingRecipes.map((recipe, index) => (
+            <div key={index} className="recipe-card">
+              <h3>{recipe.name} <span className="badge">Pending</span></h3>
+              <p>{recipe.region} | {recipe.language} | {recipe.dietary}</p>
+              <p><strong>Ingredients:</strong> {recipe.ingredients.join(", ")}</p>
+              <p><strong>Steps:</strong> {recipe.steps.join(" → ")}</p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }
