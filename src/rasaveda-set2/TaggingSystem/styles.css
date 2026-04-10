@@ -44,3 +44,95 @@ h1 {
   font-size: 0.85rem;
   color: rgba(242,228,204,0.35);
 }
+
+.feature-page {
+  padding: 30px;
+  color: #f5f5f5;
+}
+
+.page-back {
+  text-decoration: none;
+  color: orange;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* FORM */
+.form-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-box input,
+.form-box select {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+.form-box button {
+  padding: 10px 15px;
+  background: orange;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* TAG PILLS */
+.tags-container {
+  margin-bottom: 25px;
+}
+
+.tag-pill {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 5px;
+  border-radius: 20px;
+  background: #333;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.tag-pill:hover {
+  background: orange;
+  color: black;
+}
+
+.tag-pill.active {
+  background: orange;
+  color: black;
+}
+
+.tag-pill.small {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* RECIPES */
+.recipes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.recipe-card {
+  background: #1e1e1e;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.recipe-card:hover {
+  transform: scale(1.03);
+}
+
+.recipe-tags {
+  margin-top: 10px;
+}
