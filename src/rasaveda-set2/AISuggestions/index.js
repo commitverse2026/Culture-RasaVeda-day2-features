@@ -42,12 +42,6 @@ STEP 6 — Each suggestion shows name, region, match score
 ✔ "You May Also Like" panel shows 3 similar dishes
 ✔ Suggestions update when selected recipe changes
 ✔ Match score or shared ingredient count visible
-
----------------------------------------------------------
- DO NOT:
-- Call any AI or external API
-- Use ML libraries
-- The similarity logic should be a simple JS function
 =========================================================
 */
   return (
