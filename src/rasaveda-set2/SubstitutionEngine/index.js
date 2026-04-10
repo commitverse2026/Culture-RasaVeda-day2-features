@@ -3,59 +3,116 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 export default function SubstitutionEngine() {
-  /*
-=========================================================
- FEATURE: Ingredient Substitution Engine
- Difficulty: Medium
-=========================================================
+  // 🧾 Recipe
+  const recipe = {
+    name: "Paneer Butter Masala",
+    ingredients: ["Paneer", "Butter", "Cream", "Tomato"],
+  };
 
- GOAL:
-On a recipe detail page, show a "Find Substitute" modal
-that suggests alternatives for each ingredient.
+  // 🔁 Substitutes map
+  const [subs, setSubs] = useState({
+    Paneer: [
+      { name: "Tofu", note: "Vegan alternative" },
+      { name: "Cottage Cheese", note: "Similar texture" },
+    ],
+    Butter: [
+      { name: "Ghee", note: "Richer flavor" },
+      { name: "Oil", note: "Lighter option" },
+    ],
+    Cream: [
+      { name: "Coconut Milk", note: "Vegan substitute" },
+    ],
+    Tomato: [
+      { name: "Tomato Puree", note: "Smoother texture" },
+    ],
+  });
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Static recipe with ingredients list
-2. Each ingredient has a "Find Substitute" button
-3. Clicking opens a modal showing substitute options
-4. Each substitute shows: name + context note
-5. Suggestion form — users can submit a new substitute
+  const [selected, setSelected] = useState(null);
+  const [newSub, setNewSub] = useState("");
+  const [note, setNote] = useState("");
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+  // ➕ Add new substitute
+  const addSubstitute = () => {
+    if (!newSub) return;
 
-STEP 1 — Create recipe object with ingredients[]
-STEP 2 — Create substitutes map { ingredientName: [subs] }
-STEP 3 — Add useState for modalOpen and selectedIngredient
-STEP 4 — Render recipe detail with ingredient list
-STEP 5 — Clicking "Find Substitute" opens modal
-STEP 6 — Modal shows substitutes for that ingredient
-STEP 7 — Add suggestion form inside modal
+    const updated = {
+      ...subs,
+      [selected]: [
+        ...(subs[selected] || []),
+        { name: newSub, note },
+      ],
+    };
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+    setSubs(updated);
+    setNewSub("");
+    setNote("");
+  };
 
-✔ Recipe ingredients list visible
-✔ Each ingredient has a "Find Substitute" button
-✔ Modal opens with substitute options and context notes
-✔ Suggestion form lets user submit a new substitute
-✔ Submitted substitute appears in the modal list
-
-
-=========================================================
-*/
   return (
     <div className="feature-page">
       <Link to="/" className="page-back">← Back</Link>
+
       <h1>Ingredient Substitution Engine</h1>
 
       <div className="todo-box">
-        <p>Recipe ingredients + Find Substitute modal + suggestion form</p>
+        Find substitutes for ingredients + suggest your own
       </div>
 
-      <div className="placeholder">🧂 IngredientsList with "Find Substitute" buttons</div>
-      <div className="placeholder">🔲 SubstituteModal</div>
-      <div className="placeholder">📝 SuggestionForm inside modal</div>
+      {/* 🧂 INGREDIENT LIST */}
+      <div className="card">
+        <h3>{recipe.name}</h3>
+
+        {recipe.ingredients.map((ing) => (
+          <div key={ing} className="ingredient-row">
+            <span>{ing}</span>
+
+            <button onClick={() => setSelected(ing)}>
+              Find Substitute
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* 🔲 MODAL */}
+      {selected && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Substitutes for {selected}</h3>
+
+            {/* 📋 LIST */}
+            {(subs[selected] || []).map((s, i) => (
+              <div key={i} className="card">
+                <strong>{s.name}</strong>
+                <p style={{ opacity: 0.6 }}>{s.note}</p>
+              </div>
+            ))}
+
+            {/* 📝 ADD FORM */}
+            <h4>Add Suggestion</h4>
+
+            <input
+              placeholder="Substitute name"
+              value={newSub}
+              onChange={(e) => setNewSub(e.target.value)}
+            />
+
+            <input
+              placeholder="Note (optional)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+
+            <button onClick={addSubstitute}>Add</button>
+
+            <button
+              style={{ marginLeft: "10px" }}
+              onClick={() => setSelected(null)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
