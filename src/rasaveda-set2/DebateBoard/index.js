@@ -4,7 +4,26 @@ import "./styles.css";
 
 export default function DebateBoard() {
   const [selected, setSelected] = useState(null);
+  const [newDish, setNewDish] = useState("");
+  const [newClaim, setNewClaim] = useState("");
+  
+  const addDebate = () => {
+    if (!newDish || !newClaim) return;
 
+    const newDebate = {
+      id: Date.now(),
+      dish: newDish,
+      claim: newClaim,
+      status: "open",
+      replies: [],
+      resolution: "",
+    };
+
+    setDebates([newDebate, ...debates]);
+
+    setNewDish("");
+    setNewClaim("");
+  };
   const [debates, setDebates] = useState([
     {
       id: 1,
@@ -71,7 +90,24 @@ export default function DebateBoard() {
     setSelected({ ...selected, status: "closed", resolution: note });
   };
 
-  // 🔙 LIST VIEW
+  // � Reopen debate
+  const reopenDebate = () => {
+    const updated = debates.map((d) => {
+      if (d.id === selected.id) {
+        return {
+          ...d,
+          status: "open",
+          resolution: "",
+        };
+      }
+      return d;
+    });
+
+    setDebates(updated);
+    setSelected({ ...selected, status: "open", resolution: "" });
+  };
+
+  // �🔙 LIST VIEW
   if (!selected) {
     return (
       <div className="feature-page">
@@ -84,6 +120,23 @@ export default function DebateBoard() {
           Debate list + thread view + reply form + close debate
         </div>
 
+        <div className="card">
+          <h3>Start a Debate</h3>
+
+          <input
+            placeholder="Dish name"
+            value={newDish}
+            onChange={(e) => setNewDish(e.target.value)}
+          />
+
+          <input
+            placeholder="Your claim"
+            value={newClaim}
+            onChange={(e) => setNewClaim(e.target.value)}
+          />
+
+          <button onClick={addDebate}>Create Debate</button>
+        </div>
         {debates.map((d) => (
           <div
             key={d.id}
@@ -96,6 +149,28 @@ export default function DebateBoard() {
             <span className={`badge ${d.status}`}>
               {d.status}
             </span>
+
+            {d.status === "closed" && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelected(d);
+                  const updated = debates.map((debate) => {
+                    if (debate.id === d.id) {
+                      return {
+                        ...debate,
+                        status: "open",
+                        resolution: "",
+                      };
+                    }
+                    return debate;
+                  });
+                  setDebates(updated);
+                }}
+              >
+                Reopen
+              </button>
+            )}
           </div>
         ))}
       </div>
@@ -110,7 +185,7 @@ export default function DebateBoard() {
       </button>
 
       <h1>{selected.dish}</h1>
-      <p>{selected.claim}</p>
+      <p className="claim-text">{selected.claim}</p>
 
       {/* 🗨 REPLIES */}
       <div className="card">
@@ -157,6 +232,12 @@ export default function DebateBoard() {
           <h3>Resolution</h3>
           <p>{selected.resolution}</p>
         </div>
+      )}
+
+      {selected.status === "closed" && (
+        <button onClick={reopenDebate}>
+          Reopen Debate
+        </button>
       )}
     </div>
   );
