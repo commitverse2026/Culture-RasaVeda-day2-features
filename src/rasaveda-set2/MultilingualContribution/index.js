@@ -3,45 +3,42 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 export default function MultilingualContribution() {
-  /*
-=========================================================
- FEATURE: Multilingual Contribution Support
- Difficulty: Medium
-=========================================================
 
- GOAL:
-Translators can browse recipes pending translation,
-pick one and submit a translated version.
+  // STEP 1 — Recipes array
+  const [recipes, setRecipes] = useState([
+    { id: 1, name: "Puran Poli", language: "Marathi", status: "pending_translation" },
+    { id: 2, name: "Appam", language: "Tamil", status: "pending_translation" },
+    { id: 3, name: "Rasgulla", language: "Bengali", status: "pending_translation" },
+    { id: 4, name: "Khichdi", language: "Hindi", status: "translated" }
+  ]);
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Static recipes array with status: "pending_translation"
-2. Language selector — Tamil, Bengali, Marathi, Hindi
-3. Translator dashboard listing pending recipes
-4. Clicking a recipe opens a translation form
-5. On submit, recipe status updates to "translated"
+  // STEP 2 — State
+  const [selectedLanguage, setSelectedLanguage] = useState("Tamil");
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [translation, setTranslation] = useState("");
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+  // STEP 4 — Filter pending recipes
+  const pendingRecipes = recipes.filter(
+    (r) =>
+      r.status === "pending_translation" &&
+      r.language === selectedLanguage
+  );
 
-STEP 1 — Create recipes array, some with pending_translation status
-STEP 2 — Add useState for selectedLanguage
-STEP 3 — Render language selector
-STEP 4 — Filter and render pending recipes for that language
-STEP 5 — Clicking a recipe opens a translation form
-STEP 6 — On submit, update recipe status to "translated"
+  // STEP 6 — Submit handler
+  const handleSubmit = () => {
+    if (!translation || !selectedRecipe) return;
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+    const updatedRecipes = recipes.map((r) =>
+      r.id === selectedRecipe.id
+        ? { ...r, status: "translated" }
+        : r
+    );
 
-✔ Language selector visible
-✔ Pending recipes list updates by language
-✔ Clicking a recipe shows its translation form
-✔ Submitting marks recipe as translated
-✔ Translated recipes disappear from pending list
+    setRecipes(updatedRecipes);
+    setSelectedRecipe(null);
+    setTranslation("");
+  };
 
-=========================================================
-*/
   return (
     <div className="feature-page">
       <Link to="/" className="page-back">← Back</Link>
@@ -51,9 +48,91 @@ STEP 6 — On submit, update recipe status to "translated"
         <p>Language selector + pending recipes list + translation form</p>
       </div>
 
-      <div className="placeholder">🌐 LanguageSelector</div>
-      <div className="placeholder">📋 PendingRecipesList</div>
-      <div className="placeholder">📝 TranslationForm</div>
+      {/* STEP 3 — Language Selector */}
+      <div className="placeholder">
+        🌐 LanguageSelector
+        <br /><br />
+        <select
+          value={selectedLanguage}
+          onChange={(e) => {
+            setSelectedLanguage(e.target.value);
+            setSelectedRecipe(null);
+          }}
+        >
+          <option>Tamil</option>
+          <option>Bengali</option>
+          <option>Marathi</option>
+          <option>Hindi</option>
+        </select>
+      </div>
+
+      {/* STEP 4 — Pending Recipes */}
+      <div className="placeholder">
+        📋 PendingRecipesList
+
+        {pendingRecipes.length === 0 ? (
+          <p style={{ marginTop: "10px" }}>No pending recipes</p>
+        ) : (
+          pendingRecipes.map((recipe) => (
+            <div
+              key={recipe.id}
+              style={{
+                marginTop: "10px",
+                padding: "8px",
+                border: "1px solid rgba(255,153,51,0.2)",
+                cursor: "pointer"
+              }}
+              onClick={() => setSelectedRecipe(recipe)}
+            >
+              {recipe.name}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* STEP 5 — Translation Form */}
+      <div className="placeholder">
+        📝 TranslationForm
+
+        {selectedRecipe ? (
+          <>
+            <p style={{ marginTop: "10px" }}>
+              Translating: <b>{selectedRecipe.name}</b>
+            </p>
+
+            <textarea
+              value={translation}
+              onChange={(e) => setTranslation(e.target.value)}
+              placeholder="Enter translated version..."
+              style={{
+                width: "100%",
+                marginTop: "10px",
+                padding: "8px",
+                background: "#1a0d05",
+                color: "#f5e6cc",
+                border: "1px solid rgba(255,153,51,0.2)"
+              }}
+            />
+
+            <button
+              onClick={handleSubmit}
+              style={{
+                marginTop: "10px",
+                padding: "8px 16px",
+                background: "#FF9933",
+                border: "none",
+                cursor: "pointer"
+              }}
+            >
+              Submit
+            </button>
+          </>
+        ) : (
+          <p style={{ marginTop: "10px" }}>
+            Select a recipe to translate
+          </p>
+        )}
+      </div>
     </div>
   );
 }
