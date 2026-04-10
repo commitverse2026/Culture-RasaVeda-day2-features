@@ -1,63 +1,140 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import "./styles.css";
 
 export default function IssueTracker() {
-  /*
-=========================================================
- FEATURE: Issue Tracker for Cultural Accuracy
- Difficulty: Medium
-=========================================================
+  // STEP 1 — Sample Issues Data
+  const initialIssues = [
+    {
+      id: 1,
+      recipe: "Puran Poli",
+      category: "Wrong Info",
+      description: "The jaggery quantity is incorrect.",
+      status: "open",
+      resolutionNote: ""
+    },
+    {
+      id: 2,
+      recipe: "Biryani",
+      category: "Missing Context",
+      description: "No regional variation mentioned.",
+      status: "resolved",
+      resolutionNote: "Added Hyderabadi and Lucknowi versions."
+    }
+  ];
 
- GOAL:
-Users flag inaccuracies on recipe pages.
-Moderators review and resolve open issues.
+  // STEP 2 — State
+  const [issues, setIssues] = useState(initialIssues);
+  const [category, setCategory] = useState("Wrong Info");
+  const [description, setDescription] = useState("");
+  const [filter, setFilter] = useState("all");
 
----------------------------------------------------------
- REQUIREMENTS:
-1. Static issues array with: recipe, category, description, status
-2. Issue submission panel — category dropdown + description field
-3. On submit, add new issue to issues list with "open" status
-4. Moderator dashboard showing all open issues
-5. "Resolve" button closes the issue with a resolution note
+  // STEP 4 — Submit Issue
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
----------------------------------------------------------
- IMPLEMENTATION STEPS:
+    if (!description.trim()) {
+      alert("Please enter a description");
+      return;
+    }
 
-STEP 1 — Create issues array with sample data
-STEP 2 — Add useState for issues and form fields
-STEP 3 — Render issue submission form with:
-         - Category: Wrong Info / Missing Context / Offensive / Other
-         - Description textarea
-STEP 4 — On submit, push new issue into issues with status: "open"
-STEP 5 — Render moderator dashboard with open issues list
-STEP 6 — Each issue has a "Resolve" button
-STEP 7 — Clicking Resolve prompts for resolution note, updates status to "resolved"
+    const newIssue = {
+      id: Date.now(),
+      recipe: "Unknown Recipe", // Can be dynamic later
+      category,
+      description,
+      status: "open",
+      resolutionNote: ""
+    };
 
----------------------------------------------------------
- EXPECTED OUTPUT:
+    setIssues([newIssue, ...issues]);
+    setDescription("");
+  };
 
-✔ Issue submission form visible with category and description
-✔ Submitting adds issue to the open issues list
-✔ Open issues dashboard shows all pending issues
-✔ Resolve button prompts for resolution note
-✔ Resolved issues show "Resolved" badge and resolution note
-✔ Open vs resolved issues filterable
+  // STEP 7 — Resolve Issue
+  const handleResolve = (id) => {
+    const note = prompt("Enter resolution note:");
+    if (!note) return;
 
-=========================================================
-*/
+    const updatedIssues = issues.map((issue) =>
+      issue.id === id
+        ? { ...issue, status: "resolved", resolutionNote: note }
+        : issue
+    );
+
+    setIssues(updatedIssues);
+  };
+
+  // Filter Logic
+  const filteredIssues = issues.filter((issue) => {
+    if (filter === "open") return issue.status === "open";
+    if (filter === "resolved") return issue.status === "resolved";
+    return true;
+  });
+
   return (
-    <div className="feature-page">
-      <Link to="/" className="page-back">← Back</Link>
-      <h1>Issue Tracker for Cultural Accuracy</h1>
+    <div className="issue-container">
+      <h1>⚠ Cultural Accuracy Issue Tracker</h1>
 
-      <div className="todo-box">
-        <p>Issue submission form + open issues dashboard + resolve action</p>
+      {/* ================= FORM ================= */}
+      <form className="issue-form" onSubmit={handleSubmit}>
+        <h2>Report an Issue</h2>
+
+        <label>Category:</label>
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <option>Wrong Info</option>
+          <option>Missing Context</option>
+          <option>Offensive</option>
+          <option>Other</option>
+        </select>
+
+        <label>Description:</label>
+        <textarea
+          placeholder="Describe the issue..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <button type="submit">Submit Issue</button>
+      </form>
+
+      {/* ================= FILTER ================= */}
+      <div className="filters">
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("open")}>Open</button>
+        <button onClick={() => setFilter("resolved")}>Resolved</button>
       </div>
 
-      <div className="placeholder">🚩 IssueSubmissionForm (category + description)</div>
-      <div className="placeholder">📋 OpenIssuesDashboard</div>
-      <div className="placeholder">✅ ResolveButton + resolution note</div>
+      {/* ================= DASHBOARD ================= */}
+      <div className="issue-dashboard">
+        <h2>Moderator Dashboard</h2>
+
+        {filteredIssues.length === 0 && <p>No issues found.</p>}
+
+        {filteredIssues.map((issue) => (
+          <div key={issue.id} className="issue-card">
+            <h3>{issue.recipe}</h3>
+
+            <p><strong>Category:</strong> {issue.category}</p>
+            <p>{issue.description}</p>
+
+            <span className={`badge ${issue.status}`}>
+              {issue.status}
+            </span>
+
+            {issue.status === "open" && (
+              <button onClick={() => handleResolve(issue.id)}>
+                Resolve
+              </button>
+            )}
+
+            {issue.status === "resolved" && (
+              <p className="resolution">
+                <strong>Resolution:</strong> {issue.resolutionNote}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
